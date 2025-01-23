@@ -1,0 +1,17 @@
+@import url("https://use.typekit.net/mnc2ncq.css");
+
+:root {
+  --font-color: #2E3338;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "proxima-nova", sans-serif;
+}
+
+.App {
+
+}
+

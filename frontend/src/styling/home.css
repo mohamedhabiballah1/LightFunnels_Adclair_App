@@ -1,0 +1,115 @@
+.switch-container {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: auto;
+    /* margin: 10px; */
+  }
+  
+  
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin: 1rem;
+  }
+  
+  .header-container .left-line, 
+  .header-container .right-line {
+    height: 1px;
+    background-color: #e6eaef;
+    flex-grow: 2;
+    /* filter: blur(1px); */
+  }
+  
+  .logo {
+    width: 200px;
+    height: 55px;
+    margin: 0 1rem;
+  }
+  
+  .body-container {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .welcome-title {
+    font-size: 40px;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    color: var(--font-color);
+  }
+  
+  .description {
+    text-align: center;
+    max-width: 650px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--font-color);
+  }
+  
+  .buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .button {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 5px;
+    width: 150px;
+    height: 45px;
+    border-radius: 10px;
+    border: 2px solid #60abff;
+    box-shadow: 3px 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    background-color: #0085ff;
+  }
+  
+  .button:not(.disabled):hover{
+    background-color: #0161f4;
+    transition: 0.5s;
+  }
+  .button:first-child img{
+    width: 40px;
+    height: 29px;
+  }
+  
+  .button:last-child img{
+    width: 40px;
+    height: 41px;
+  }
+  
+  
+  .footer-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f1f5f9;
+    text-align: center;
+    border-top: 1px solid #e6eaef;
+    height: 77px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .footer-container p {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--font-color);
+  }
