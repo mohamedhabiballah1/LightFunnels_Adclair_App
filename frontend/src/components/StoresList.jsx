@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 function getInitials(str) {
     const words = str.trim().split(/\s+/);
-    const initials = words.slice(0, 2).map(word => word.charAt(0).toUpperCase());
-    return initials.join('');
+    return words.slice(0, 2).map(word => word.charAt(0).toUpperCase()).join('');
 }
 
 const StoresList = ({ setStoreSelected }) => {
-    const ownerId = new URLSearchParams(window.location.search).get('ownerId');
-    localStorage.setItem('ownerId', ownerId);
+    const token = new URLSearchParams(window.location.search).get('token');
     const navigate = useNavigate();
     const [data, setData] = useState([]);
     const [selectedStore, setSelectedStore] = useState(null);
@@ -20,15 +18,16 @@ const StoresList = ({ setStoreSelected }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${BackendUrl}/store/list`, {
+                const response = await fetch(`${BackendUrl}/store/list?token=${token}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                    },
+                    }
                 });
+
                 if (response.ok) {
-                    const data = await response.json();
-                    setData(data);
+                    const result = await response.json();
+                    setData(result);
                 } else {
                     console.warn('No data found in the response.');
                 }
@@ -38,11 +37,13 @@ const StoresList = ({ setStoreSelected }) => {
         };
 
         fetchData();
-    }, [BackendUrl]);
+    }, [BackendUrl, token]);
 
     const handleSubmit = async () => {
+        if (!selectedStore) return;
+
         try {
-            const response = await fetch(`${BackendUrl}/store/selecting`, {
+            const response = await fetch(`${BackendUrl}/store/selecting?token=${token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,8 +52,8 @@ const StoresList = ({ setStoreSelected }) => {
             });
 
             if (response.ok) {
-                setStoreSelected(selectedStore); 
-                navigate('/dashboard'); 
+                setStoreSelected(selectedStore);
+                navigate(`/dashboard?token=${token}`);
             } else {
                 const errorMessage = await response.text();
                 console.warn('Failed to select store:', errorMessage);
@@ -69,10 +70,10 @@ const StoresList = ({ setStoreSelected }) => {
                     <img src={logo} alt="" className='logo'/>
                 </div>
                 <ul className="store-list">
-                    {data.map((item, index) => (
+                    {data.map((item) => (
                         <li
-                            key={index}
-                            className={`store-item ${selectedStore === item ? 'selected' : ''}`}
+                            key={item.id}
+                            className={`store-item ${selectedStore?.id === item.id ? 'selected' : ''}`}
                             onClick={() => setSelectedStore(item)} 
                         >
                             <div className="store-icon">
@@ -84,7 +85,7 @@ const StoresList = ({ setStoreSelected }) => {
                         </li>
                     ))}
                 </ul>
-                <span className='select-describtion'>
+                <span className='select-description'>
                     Select the store you want to sync with Adclair to start using the app.
                 </span>
             </div>

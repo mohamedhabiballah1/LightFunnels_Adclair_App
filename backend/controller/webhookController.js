@@ -84,8 +84,18 @@ const orderFunction = async (req, res) => {
 }
 
 const uninstallFunction = async (req, res) => {
-    console.log("UNINSTALL from here")
-    res.status(200).send('Uninstall received');
+    try {
+        const node = req.body.node;
+        const session = await LightFunnelsSession.findOne({ ownerId: node.id });
+        if (!session) {
+            return res.status(404).send('No LightFunnels session found');
+        } else {
+            session.remove();
+        }
+        res.status(200).send('Uninstall received');
+    } catch (error) {
+        return res.status(500).send('Failed to uninstall');
+    }
 }
  
 module.exports = {

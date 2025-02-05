@@ -1,31 +1,41 @@
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const LightFunnelsSession = require('../model/LightFunnelsSession.model');
 
 const selectStoreFunction = async (req, res) => {
     try {
-        const lightFunnels = await LightFunnelsSession.find();
-        if (lightFunnels.length > 0) {
-            const storeSelected = lightFunnels[0].storeSelected;
-            return res.send(storeSelected);
-        } else {
-            return res.send('No LightFunnel models found');
+        const token = req.query.token;
+        if (!token) return res.status(400).send('Token is required');
+        
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const ownerId = decodedToken.account_id;
+
+        const lightFunnels = await LightFunnelsSession.findOne({ ownerId });
+        if (!lightFunnels) {
+            return res.status(404).send('No LightFunnel models found');
         }
+        return res.json({ storeSelected: lightFunnels.storeSelected });
     } catch (error) {
-        console.error(error);
-        return res.send('Error');
+        return res.status(500).send('Error selecting store');
     }
-}
+};
 
 const listStoresFunction = async (req, res) => {
     try {
-        const lightFunnelsSessions = await LightFunnelsSession.find();
+        const token = req.query.token;
+        if (!token) return res.status(400).send('Token is required');
 
-        if (lightFunnelsSessions.length === 0) {
-            return res.status(404).send('No LightFunnel sessions found');
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const ownerId = decodedToken.account_id;
+
+        const lightFunnels = await LightFunnelsSession.findOne({ ownerId });
+        if (!lightFunnels) {
+            return res.status(404).send('No LightFunnels session found');
         }
 
-        const accessToken = lightFunnelsSessions[0].accessToken;
-
+        const accessToken = lightFunnels.accessToken;
+        console.log('Access Token:', accessToken);
+        
         const response = await axios.post(
             'https://services.lightfunnels.com/api/v2',
             {
@@ -48,13 +58,13 @@ const listStoresFunction = async (req, res) => {
             }
         );
 
-        if (response.data && response.data.data?.account?.stores) {
-            const stores = response.data.data.account.stores;
-            return res.status(200).json(stores);
+        if (response.data?.data?.account?.stores) {
+            return res.status(200).json(response.data.data.account.stores);
         } else {
             return res.status(500).send('Failed to fetch stores. Please try again later.');
         }
     } catch (error) {
+        console.error('Error fetching stores:', error);
         return res.status(500).send('An error occurred while fetching stores.');
     }
 };
@@ -62,24 +72,34 @@ const listStoresFunction = async (req, res) => {
 const selectingFunction = async (req, res) => {
     try {
         const { store } = req.body;
-        const session = await LightFunnelsSession.findOne();
-        
+        const token = req.query.token;
+
+        if (!store || !store.id || !store.name) {
+            return res.status(400).send('Store ID and name are required');
+        }
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const ownerId = decodedToken.account_id;
+
+        const session = await LightFunnelsSession.findOneAndUpdate(
+            { ownerId },
+            { 
+                storeSelected: true,
+                storeName: store.name,
+                storeId: store.id
+            },
+            { new: true }
+        );
+
         if (!session) {
             return res.status(404).send('No LightFunnels session found');
         }
 
-        session.storeSelected = true;
-        session.storeName = store.name;
-        session.storeId = store.id;
-
-        await session.save();
         return res.status(200).send('Store selected successfully');
     } catch (error) {
-        console.error('Error occurred while selecting store:', error);
         return res.status(500).send('An error occurred while selecting the store.');
     }
 };
-
 
 module.exports = {
     selectStoreFunction,

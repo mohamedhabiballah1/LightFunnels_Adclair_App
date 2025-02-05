@@ -35,7 +35,6 @@ const createWebhook = async (account, url, event) => {
         };
 
         const response = await axios(config);
-        console.log(`Webhook for ${event} created successfully:`, response.data);
     } catch (error) {
         console.error(`Failed to create webhook for ${event}:`, error.message);
     }

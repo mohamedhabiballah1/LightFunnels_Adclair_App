@@ -1,1 +1,0 @@
-https://app.lightfunnels.com/admin/oauth?client_id=p3Xv0PiojNUCgLXoaKv5Z&redirect_uri=DtCsTHYJJ8Pyoa483c_xWxr8Cp__Ll3p4FdijzpT2mqXDaoJ&scope=orders&state=123

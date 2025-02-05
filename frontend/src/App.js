@@ -8,13 +8,11 @@ import Home from './components/Home';
 const BackendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function App() {
-  const [storeSelected, setStoreSelected] = useState(null);
+  const [storeSelected, setStoreSelected] = useState(false);
   const [loading, setLoading] = useState(true);
+  const token = new URLSearchParams(window.location.search).get('token');
 
   useEffect(() => {
-    console.log('Checking for authentication...');
-    const token = localStorage.getItem('token');
-    
     if (!token) {
       window.location.href = `${BackendUrl}/auth`;
     } else {
@@ -24,8 +22,8 @@ function App() {
 
   const fetchStoreSelection = async () => {
     try {
-      const response = await axios.get(`${BackendUrl}/store/select`);
-      setStoreSelected(response.data);
+      const response = await axios.get(`${BackendUrl}/store/select?token=${token}`);
+      setStoreSelected(response.data.storeSelected);
     } catch (error) {
       console.error('Error fetching store selection:', error);
     } finally {
