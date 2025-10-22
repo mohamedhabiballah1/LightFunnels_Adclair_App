@@ -32,11 +32,10 @@ This integration eliminates manual data entry, reduces delays, and ensures real-
 
 ## 🛠️ Tech Stack  
 - **Backend:** Node.js, Express  
-- **Database:** PostgreSQL / MongoDB (optional, for logs or order tracking)  
+- **Database:** MongoDB (optional, for logs or order tracking)  
 - **Integrations:**  
   - LightFunnels Webhooks  
   - AdClair API  
-- **DevOps:** Docker, Git, CI/CD pipelines  
 - **Utilities:** Axios, dotenv, and other modern backend tools  
 
 ---
